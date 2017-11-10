@@ -33,9 +33,13 @@ COOKIE=$(mktemp)
 wget --save-cookies $COOKIE --keep-session-cookies --post-data 'name=ADMIN&pwd=ADMIN' --delete-after http://localhost:$L_WEB/cgi/login.cgi
 SID=$(grep SID $COOKIE | awk '{print $7}')
 
-# create a proper jnlp
+echo "*** get launch.jnlp ***"
 JNLP=launch_$NODE.jnlp
-sed -e s/#SSL#/$L_SSL/g -e s/#VNC#/$L_VNC/g -e s/#MEDIA#/$L_MEDIA/g -e s/#SID#/$SID/g launch_mfles.template > $JNLP
+wget -O $JNLP.tmp --load-cookies $COOKIE --post-data 'url_name=sess_$SID&url_type=jwsk' http://localhost:1081/cgi/url_redirect.cgi
+
+# fix ports in jnlp
+sed -e s/localhost:$R_SSL/localhost:$L_SSL/g -e s/$R_VNC/$L_VNC/g -e s/$R_MEDIA/$L_MEDIA/g $JNLP.tmp > $JNLP
+rm $JNLP.tmp
 
 echo "*** launch KVM ***"
 open $JNLP
