@@ -35,7 +35,7 @@ SID=$(grep SID $COOKIE | awk '{print $7}')
 
 echo "*** get launch.jnlp ***"
 JNLP=launch_$NODE.jnlp
-wget -O $JNLP.tmp --load-cookies $COOKIE --post-data 'url_name=sess_$SID&url_type=jwsk' http://localhost:1081/cgi/url_redirect.cgi
+wget -O $JNLP.tmp --load-cookies $COOKIE --post-data 'url_name=sess_$SID&url_type=jwsk' http://localhost:$L_WEB/cgi/url_redirect.cgi
 
 # fix ports in jnlp
 sed -e s/localhost:$R_SSL/localhost:$L_SSL/g -e s/$R_VNC/$L_VNC/g -e s/$R_MEDIA/$L_MEDIA/g $JNLP.tmp > $JNLP
